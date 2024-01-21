@@ -1,0 +1,27 @@
+.dropdown-container {
+    text-align: center; /* Centers the dropdown */
+    margin-bottom: 20px;
+  }
+  
+  .year-dropdown {
+    margin-right: 10px;
+  }
+  
+  .admission-table {
+    width: 80%; /* Full-width table */
+    border-collapse: collapse; /* Collapses border */
+  }
+  
+  .admission-table, .admission-table th, .admission-table td {
+    border: 1px solid black; /* Adds border to table and cells */
+  }
+  
+  .admission-table th, .admission-table td {
+    padding: 10px; /* Adds padding for cells */
+    text-align: center; /* Centers text in cells */
+  }
+  
+  .admission-table th {
+    background-color: #f2f2f2; /* Adds background color to header */
+  }
+  

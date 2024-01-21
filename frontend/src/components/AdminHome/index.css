@@ -1,0 +1,46 @@
+/* General styling for the home container */
+.home-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #ffffff;
+  }
+  
+  /* Styling for the logo */
+  .logo1 {
+    max-width: 150px; /* Adjust based on your logo size */
+    margin-bottom: 20px;
+  }
+  
+  /* Styling for headings */
+  .home-container h1 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .home-container h3 {
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  /* Button styling */
+  .home-container button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .home-container button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Add additional styles as needed */
+  

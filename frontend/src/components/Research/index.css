@@ -1,0 +1,31 @@
+.dropdown-container {
+    text-align: center; /* Centers the dropdown */
+    margin-bottom: 30px; /* Spacing between dropdown and table */
+  }
+  
+  .department-dropdown {
+    margin-right: 10px;
+  }
+  
+  .table-container {
+    text-align: center;
+  }
+  
+  .research-table {
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  
+  .research-table, .research-table th, .research-table td {
+    border: 1px solid black;
+  }
+  
+  .research-table th, .research-table td {
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .research-table th {
+    background-color: #f2f2f2;
+  }
+  
