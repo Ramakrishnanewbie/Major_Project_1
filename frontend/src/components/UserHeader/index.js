@@ -11,9 +11,9 @@ class UserHeader extends Component{
             <nav className='nav-container'>   
                 <ul className='ulist-container'>
                     <li>
-                    <Link to='/userhome'>
+                    
                             <img src={logo} alt='logo' className='logo'/>
-                    </Link>
+                    
                     </li>
                     <li>
                         <Link to='/students'>
@@ -41,7 +41,9 @@ class UserHeader extends Component{
                         </Link>
                     </li>
                     <li>
+                    <Link to='/logout'>
                         <button type='button' className='btn'>Logout</button>
+                    </Link>
                     </li>
                 </ul>
                 <hr className='hrule'/>

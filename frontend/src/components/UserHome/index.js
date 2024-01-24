@@ -14,11 +14,11 @@ function UserHome(){
                     <img src={logo} alt='logo' className='logo1'/>
                     <h1>Welcome to AU Dashboard</h1>
                     <h3>Unlock Insights, Elevate Education: Your All-in-One University Data Companion</h3>
-                    <button onClick={() => history.push('/userhome')}>Home</button>
+                    <button>Home</button>
                     <button onClick={() => history.push('/students')}>Students</button>
                     <button onClick={() => history.push('/faculty')}>Faculty</button>
                     <button onClick={() => history.push('/programs')}>Programs</button>
-                    <button onClick={() => history.push('/admissions')}>admissions</button>
+                    <button onClick={() => history.push('/admissions')}>Admissions</button>
                     <button onClick={() => history.push('/reseach-grants')}>Research Grants</button>
                 </div>
             </>

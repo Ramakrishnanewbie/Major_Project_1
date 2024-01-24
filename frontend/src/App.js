@@ -16,32 +16,33 @@ import ViewUser from './components/ViewUser';
 import UserHome from './components/UserHome';
 import AdminHome from './components/AdminHome';
 import DeleteUser from './components/DeleteUser';
+import Logout from './components/Logout';
 import './App.css';
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true); // State to track loading of auth state
   const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in.
-        setCurrentUser(user);
-      } else {
-        // No user is signed in.
-        setCurrentUser(null);
-      }
+      setCurrentUser(user);
+      setLoading(false); // Set loading to false once we get the auth state
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [auth]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Or any loading spinner
+  }
 
   return (
     <Router>
       <Switch>
-        <Route exact path='/' component={Home}/>
+      <Route exact path='/' component={Home}/>
         <Route path='/login' component={Login}/>
+        <Route path='/logout' component={Logout}/>
 
         {/* Protected Routes */}
         <Route exact path='/students' render={() => currentUser ? <Students /> : <Redirect to="/login" />} />

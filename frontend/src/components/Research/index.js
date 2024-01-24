@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import Header from '../Header';
+import UserHeader from '../UserHeader';
 import './index.css';
 
 // Firebase configuration
@@ -108,7 +108,7 @@ class ResearchGrants extends Component {
     const { departments, selectedDepartment, loading, message } = this.state;
     return (
       <>
-        <Header />
+        <UserHeader />
         <div className="dropdown-container">
           <select value={selectedDepartment} onChange={this.handleDepartmentChange} className="department-dropdown">
             <option value="">Select Department</option>

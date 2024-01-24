@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import Header from '../Header';
 import './index.css';
+import UserHeader from '../UserHeader';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -61,7 +62,7 @@ const Admissions = () => {
 
   return (
       <div>
-        <Header />
+        <UserHeader />
         <div className="dropdown-container"> {/* Centered dropdown */}
           <select value={selectedYear} onChange={handleYearChange} className="year-dropdown">
             <option value="">Select Year</option>

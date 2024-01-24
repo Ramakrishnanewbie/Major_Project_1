@@ -5,6 +5,7 @@ import { getFirestore, collection, getDocs, query, where } from 'firebase/firest
 import { initializeApp } from 'firebase/app';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Legend } from 'recharts';
+import UserHeader from '../UserHeader';
 
 const firebaseConfig = {
     apiKey: "AIzaSyC3mjvIXgowrzAntZfdwqgg0RNk6y4rwXk",
@@ -205,7 +206,7 @@ class Students extends Component {
         return (
           <>
           
-            <Header />
+            <UserHeader />
             <div className='std-main-container'>
               <div className='std-drop-container'>
                 <label className='drop-label'>Program</label>

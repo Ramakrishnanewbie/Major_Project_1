@@ -38,7 +38,9 @@ class AdminHeader extends Component{
                     </li>
 
                     <li>
+                    <Link to='/logout'>
                         <button type='button' className='btn'>Logout</button>
+                    </Link>
                     </li>
                 </ul>
                 <hr className='hrule'/>
