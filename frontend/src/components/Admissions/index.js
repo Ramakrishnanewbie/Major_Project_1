@@ -4,6 +4,7 @@ import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import Header from '../Header';
 import './index.css';
 import UserHeader from '../UserHeader';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -55,51 +56,68 @@ const Admissions = () => {
     setSelectedYear(e.target.value);
   };
 
+  const filteredData = allData.filter(item => item.Year === selectedYear);
+
+  // Prepare data for the Bar chart
+  const programData = filteredData.map(item => ({
+    Program: item.Program,
+    Intake: item.Intake,
+    Admitted: item.Admitted,
+    LateralCount: item.LateralCount,
+  }));
+
   const handleGoClick = () => {
     const filteredData = allData.filter(item => item.Year === selectedYear);
     setAdmissionData(filteredData);
   };
+  
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#85144b', '#F012BE', '#3D9970', '#111111'];
 
   return (
-      <div>
-        <UserHeader />
-        <div className="dropdown-container"> {/* Centered dropdown */}
-          <select value={selectedYear} onChange={handleYearChange} className="year-dropdown">
-            <option value="">Select Year</option>
-            {years.map((year, index) => (
-              <option key={index} value={year}>{year}</option>
-            ))}
-          </select>
-          <button onClick={handleGoClick}>Go</button>
-        </div>
-        {!loading && admissionData.length > 0 && (
-          <table className="admission-table"> {/* Styled table */}
-            <thead>
-              <tr>
-                <th>Program</th>
-                <th>Intake</th>
-                <th>Admitted</th>
-                <th>AdmittedPercent</th>
-                <th>LateralCount</th>
-                <th>Year</th>
-              </tr>
-            </thead>
-            <tbody>
-              {admissionData.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.Program}</td>
-                  <td>{item.Intake}</td>
-                  <td>{item.Admitted}</td>
-                  <td>{item.Admittedpercent}</td>
-                  <td>{item.LateralCount}</td>
-                  <td>{item.Year}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+    <div>
+      <UserHeader />
+      <div className="dropdown-container">
+        <select value={selectedYear} onChange={handleYearChange} className="year-dropdown">
+          <option value="">Select Year</option>
+          {years.map((year, index) => (
+            <option key={index} value={year}>{year}</option>
+          ))}
+        </select>
       </div>
-    );
+
+      {!loading && filteredData.length > 0 && (
+        <div className="charts-container" style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+          <div className="chart-card">
+            <h3 className="chart-title">Program Wise Intake & Admitted</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={programData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="Program" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="Intake" fill={COLORS[0]} name="Intake" />
+                <Bar dataKey="Admitted" fill={COLORS[1]} name="Admitted" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="chart-card">
+            <h3 className="chart-title">Program Wise Lateral Entry Count</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={programData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="Program" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="LateralCount" fill={COLORS[2]} name="Lateral Entry Count" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Admissions;

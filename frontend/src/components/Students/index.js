@@ -75,6 +75,31 @@ class Students extends Component {
       }));
   }
 
+  getGenderVsCasteChartData() {
+    const { studentsData } = this.state;
+    let data = {};
+
+    // Loop through each student and build up the counts
+    studentsData.forEach(student => {
+        const gender = student.s_gender.toUpperCase();
+        const caste = student.Caste.toUpperCase();
+
+        if (!data[gender]) {
+            data[gender] = {};
+        }
+        if (!data[gender][caste]) {
+            data[gender][caste] = 0;
+        }
+        data[gender][caste]++;
+    });
+
+    // Convert the data object to an array format suitable for Recharts
+    return Object.entries(data).map(([gender, casteCounts]) => {
+        return { gender, ...casteCounts };
+    });
+}
+
+
     handleProgramChange = (event) => {
         const program = event.target.value;
         this.setState({
@@ -202,6 +227,7 @@ class Students extends Component {
         const genderChartData = this.getGenderChartData();
         const casteChartData = this.getCasteChartData();
         const { showCharts } = this.state;
+        const genderVsCasteChartData = this.getGenderVsCasteChartData();
         const chartCardClassName = showCharts ? "chart-card show-shadow" : "chart-card";
         return (
           <>
@@ -295,6 +321,9 @@ class Students extends Component {
             <h3 className="chart-title">Caste Distribution</h3>
           </div>
             </div>
+
+          
+            
             )}
             </div>
           </>

@@ -3,6 +3,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import UserHeader from '../UserHeader';
 import './index.css';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+
 
 // Your web app's Firebase configuration
 
@@ -20,6 +22,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#00C49F', '#0088FE', /* more colors */];
 
 const FacultyComponent = () => {
   const [selectedProgram, setSelectedProgram] = useState('');
@@ -122,6 +126,27 @@ const FacultyComponent = () => {
     setSelectedDepartment(event.target.value);
   };
 
+  const getDesignationChartData = (data) => {
+    const designationCount = data.reduce((acc, faculty) => {
+      const designation = faculty.designation; // Assuming 'designation' is the key for faculty designation
+      acc[designation] = (acc[designation] || 0) + 1;
+      return acc;
+    }, {});
+  
+    return Object.entries(designationCount).map(([name, value]) => ({ name, value }));
+  };
+  
+  const getGenderChartData = (data) => {
+    const genderCount = data.reduce((acc, faculty) => {
+      const gender = faculty.gender; // Assuming 'gender' is the key for faculty gender
+      acc[gender] = (acc[gender] || 0) + 1;
+      return acc;
+    }, {});
+  
+    return Object.entries(genderCount).map(([name, value]) => ({ name, value }));
+  };
+  
+
   const fetchFacultyData = async () => {
     try {
       // Adjust the query to match the case and structure of your Firestore collection
@@ -137,7 +162,7 @@ const FacultyComponent = () => {
         // Mapping keys based on your Firestore document structure
         return {
           name: faculty.f_name,   // Assuming 'f_name' is the correct key
-          course: faculty.f_course,  // Assuming 'f_course' is the correct key
+          designation: faculty.f_course,  // Assuming 'f_course' is the correct key
           branch: faculty.f_branch,  // Assuming 'f_branch' is the correct key
           gender: faculty.f_gender,  // Assuming 'f_gender' is the correct key
           caste: faculty.Caste  // Assuming 'Caste' is the correct key
@@ -175,11 +200,12 @@ const FacultyComponent = () => {
       <button onClick={fetchFacultyData}>GO</button>
 
       {facultyData.length > 0 && (
+        <>
   <table>
     <thead>
       <tr>
         <th>Name</th>
-        <th>Course</th>
+        <th>Designation</th>
         <th>Branch</th>
         <th>Gender</th>
         <th>Caste</th>
@@ -190,7 +216,7 @@ const FacultyComponent = () => {
       {facultyData.map((faculty, index) => (
         <tr key={index}>
           <td>{faculty.name}</td>
-          <td>{faculty.course}</td>
+          <td>{faculty.designation}</td>
           <td>{faculty.branch}</td>
           <td>{faculty.gender}</td>
           <td>{faculty.caste}</td>
@@ -199,9 +225,39 @@ const FacultyComponent = () => {
       ))}
     </tbody>
   </table>
-)}
 
-    
+<div className="charts-container" style={{ display: 'flex', justifyContent: 'space-around' }}>
+<div className="chart-card">
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart data={getDesignationChartData(facultyData)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="value" fill="#8884d8" name="Count" />
+    </BarChart>
+  </ResponsiveContainer>
+  <h3 className="chart-title">Professors by Designation</h3>
+</div>
+
+<div className="chart-card">
+  <ResponsiveContainer width="100%" height={300}>
+    <PieChart>
+      <Pie data={getGenderChartData(facultyData)} cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label>
+        {getGenderChartData(facultyData).map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+        ))}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+  <h3 className="chart-title">Gender Distribution</h3>
+</div>
+</div>
+</>
+)}
     </>
   );
 };
