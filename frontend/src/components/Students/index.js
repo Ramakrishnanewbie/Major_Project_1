@@ -3,8 +3,7 @@ import './index.css';
 import Header from '../Header';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import UserHeader from '../UserHeader';
 
 const firebaseConfig = {
@@ -26,18 +25,26 @@ const firebaseConfig = {
 
 class Students extends Component {
     constructor(props) {
-        super(props);
-        this.state = {
-          selectedProgram: "default",
-          selectedBranch: "default",
-          selectedYear: "default",
-          showCharts: false,
-          programOptions: ["BTECH", "MTECH", "PHD", "BPHARM", "BSC", "MPHARM", "BBA"],
-          branchOptions: [],
-          studentsData: [],
-          yearOptions: []
-        };
+      super(props);
+      this.state = {
+        selectedProgram: "default",
+        selectedBranch: "default",
+        selectedYear: "default",
+        showCharts: false,
+        programOptions: ["BTECH", "MTECH", "PHD", "BPHARM", "BSC", "MPHARM", "BBA"],
+        branchOptions: [],
+        studentsData: [],
+        yearOptions: []
+      };
       }
+      
+      componentDidUpdate(prevProps, prevState) {
+        // Check if the selection has changed and is not default
+        if (this.state.selectedProgram !== "default" && this.state.selectedBranch !== "default" && this.state.selectedYear !== "default" &&
+            (prevState.selectedProgram !== this.state.selectedProgram || prevState.selectedBranch !== this.state.selectedBranch || prevState.selectedYear !== this.state.selectedYear)) {
+            this.fetchData();
+        }
+    }
 
       getGenderChartData() {
         const { studentsData } = this.state;
@@ -75,29 +82,33 @@ class Students extends Component {
       }));
   }
 
-  getGenderVsCasteChartData() {
-    const { studentsData } = this.state;
-    let data = {};
-
+  
     // Loop through each student and build up the counts
-    studentsData.forEach(student => {
-        const gender = student.s_gender.toUpperCase();
-        const caste = student.Caste.toUpperCase();
-
-        if (!data[gender]) {
-            data[gender] = {};
-        }
-        if (!data[gender][caste]) {
-            data[gender][caste] = 0;
-        }
-        data[gender][caste]++;
-    });
-
-    // Convert the data object to an array format suitable for Recharts
-    return Object.entries(data).map(([gender, casteCounts]) => {
-        return { gender, ...casteCounts };
-    });
-}
+    getGenderVsCasteChartData() {
+      const { studentsData } = this.state;
+      let data = {};
+  
+      // Loop through each student and build up the counts
+      studentsData.forEach(student => {
+          const gender = student.s_gender.toUpperCase();
+          const caste = student.Caste.toUpperCase();
+  
+          if (!data[caste]) {
+              data[caste] = { caste, Male: 0, Female: 0 }; // Initialize caste object with Male and Female counts set to 0
+          }
+  
+          if (gender === 'M') {
+              data[caste].Male++; // Increment male count for the caste
+          } else if (gender === 'F') {
+              data[caste].Female++; // Increment female count for the caste
+          }
+          // Add more conditions here if there are more genders in your data
+      });
+  
+      // Convert the data object to an array format suitable for Recharts
+      return Object.values(data); // We use Object.values here because we want the values from the 'data' object which are our formatted caste objects
+  }
+  
 
 
     handleProgramChange = (event) => {
@@ -224,11 +235,11 @@ class Students extends Component {
     }
 
     render() {
-        const genderChartData = this.getGenderChartData();
-        const casteChartData = this.getCasteChartData();
-        const { showCharts } = this.state;
-        const genderVsCasteChartData = this.getGenderVsCasteChartData();
-        const chartCardClassName = showCharts ? "chart-card show-shadow" : "chart-card";
+      const genderChartData = this.getGenderChartData();
+      const casteChartData = this.getCasteChartData();
+      const { showCharts } = this.state;
+      const genderVsCasteChartData = this.getGenderVsCasteChartData();
+      const chartCardClassName = showCharts ? "chart-card show-shadow" : "chart-card";
         return (
           <>
           
@@ -268,7 +279,7 @@ class Students extends Component {
                     <option key={index} value={year}>{year}</option>
                   ))}
                 </select>
-                <button onClick={this.fetchData}>Go</button>
+                {/* <button onClick={this.fetchData}>Go</button> */}
               </div>
               {this.renderTable()}
 
@@ -283,7 +294,7 @@ class Students extends Component {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  outerRadius={150}
+                  outerRadius={115}
                   fill="#82ca9d"
                   dataKey="value"
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
@@ -306,7 +317,7 @@ class Students extends Component {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  outerRadius={150}
+                  outerRadius={115}
                   fill="#82ca9d"
                   dataKey="value"
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
@@ -320,6 +331,28 @@ class Students extends Component {
             </ResponsiveContainer>
             <h3 className="chart-title">Caste Distribution</h3>
           </div>
+
+    <div className={chartCardClassName}>
+      <h3 className="chart-title">Caste-wise Gender Distribution</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={genderVsCasteChartData}
+          margin={{
+            top: 5, right: 30, left: 20, bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="caste" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="Male" fill="#8884d8" />
+          <Bar dataKey="Female" fill="#82ca9d" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+
+
             </div>
 
           

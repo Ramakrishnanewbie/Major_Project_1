@@ -88,6 +88,23 @@ const Admissions = () => {
       {!loading && filteredData.length > 0 && (
         <div className="charts-container" style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
           <div className="chart-card">
+            <h3 className="chart-title">Program Wise Intake</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={programData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="Program" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="Intake" fill={COLORS[3]} name="Intake" />
+                
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          
+          
+          
+          <div className="chart-card">
             <h3 className="chart-title">Program Wise Intake & Admitted</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={programData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>

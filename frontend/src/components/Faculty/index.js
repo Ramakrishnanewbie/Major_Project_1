@@ -108,6 +108,13 @@ const FacultyComponent = () => {
     }
   }, [selectedProgram]);
 
+
+  useEffect(() => {
+    if (selectedProgram && selectedDepartment) {
+      fetchFacultyData();
+    }
+  }, [selectedProgram, selectedDepartment]);
+
   const handleProgramChange = (event) => {
     const program = event.target.value;
     setSelectedProgram(program);
@@ -145,6 +152,32 @@ const FacultyComponent = () => {
   
     return Object.entries(genderCount).map(([name, value]) => ({ name, value }));
   };
+
+  const getProfessorGenderChartData = (data) => {
+    const result = data.reduce((acc, faculty) => {
+      const { designation, gender } = faculty;
+      acc[designation] = acc[designation] || { M: 0, F: 0 }; // Initialize if not present
+      acc[designation][gender]++; // Increment gender count
+      return acc;
+    }, {});
+  
+    return Object.entries(result).map(([designation, genders]) => ({
+      designation,
+      ...genders,
+    }));
+  };
+
+  const getCasteChartData = (data) => {
+    const casteCount = data.reduce((acc, faculty) => {
+      const { caste } = faculty;
+      acc[caste] = (acc[caste] || 0) + 1;
+      return acc;
+    }, {});
+  
+    return Object.entries(casteCount).map(([name, value]) => ({ name, value }));
+  };
+  
+  
   
 
   const fetchFacultyData = async () => {
@@ -180,24 +213,22 @@ const FacultyComponent = () => {
           
     <UserHeader />
     <div className="dropdown-container">
-  <select value={selectedProgram} onChange={handleProgramChange}>
-    <option value="">Select Program</option>
-    {Object.keys(programs).map(program => (
-      <option key={program} value={program}>{program}</option>
-    ))}
-  </select>
-  
-  <select value={selectedDepartment} onChange={handleDepartmentChange} disabled={!selectedProgram}>
-    <option value="">Select Department</option>
-    {departments.map(department => (
-      <option key={department} value={department}>{department}</option>
-    ))}
-  </select>
-  
-  {/* Since data is now filtered on the client-side, the "GO" button is no longer needed. */}
-</div>
+        <select value={selectedProgram} onChange={handleProgramChange}>
+          <option value="">Select Program</option>
+          {Object.keys(programs).map(program => (
+            <option key={program} value={program}>{program}</option>
+          ))}
+        </select>
+
+        <select value={selectedDepartment} onChange={handleDepartmentChange} disabled={!selectedProgram}>
+          <option value="">Select Department</option>
+          {departments.map(department => (
+            <option key={department} value={department}>{department}</option>
+          ))}
+        </select>
+      </div>
       
-      <button onClick={fetchFacultyData}>GO</button>
+      
 
       {facultyData.length > 0 && (
         <>
@@ -226,7 +257,8 @@ const FacultyComponent = () => {
     </tbody>
   </table>
 
-<div className="charts-container" style={{ display: 'flex', justifyContent: 'space-around' }}>
+<div className="charts-container">
+  <div className="charts-row"  style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px' }}>
 <div className="chart-card">
   <ResponsiveContainer width="100%" height={300}>
     <BarChart data={getDesignationChartData(facultyData)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -254,6 +286,43 @@ const FacultyComponent = () => {
     </PieChart>
   </ResponsiveContainer>
   <h3 className="chart-title">Gender Distribution</h3>
+</div>
+</div>
+<div className="charts-row" style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px' }}>
+<div className="chart-card">
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart
+      layout="horizontal" // Set layout to vertical
+      data={getProfessorGenderChartData(facultyData)}
+      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <YAxis type="number" /> // XAxis now represents the numeric axis
+      <XAxis dataKey="designation" type="category" width={150} /> // YAxis is now the category axis
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="M" fill="#8884d8" />
+      <Bar dataKey="F" fill="#82ca9d" />
+    </BarChart>
+  </ResponsiveContainer>
+  <h3 className="chart-title">Professor-wise Gender Distribution</h3>
+</div>
+
+
+<div className="chart-card">
+  <ResponsiveContainer width="100%" height={300}>
+    <PieChart>
+      <Pie data={getCasteChartData(facultyData)} cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label>
+        {getCasteChartData(facultyData).map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+        ))}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+  <h3 className="chart-title">Caste Distribution</h3>
+</div>
 </div>
 </div>
 </>
